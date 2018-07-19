@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.model.mapper.CandidateMapper" >  
+
+    <select id="getCandidates" resultType="Candidate">
+        select *
+        from candidate
+        where aid = #{0} 
+    </select>
+    
+   <insert id="saveCandidate" parameterType="Candidate">
+       
+        <selectKey keyProperty="cid" order="BEFORE" resultType="int">
+             select max(cid)+1 from candidate
+        </selectKey>
+         insert into candidate values(#{cid}, #{aid},#{cname},#{cdeclaration},#{mobile},#{sex},#{address},0,0,0,#{imgurl})
+    </insert>
+    
+   <select id="getCandidateById" parameterType="int" resultMap="_candidate">
+         select c.*, i.id, i.imgurl as img
+         from candidate c, images i
+         where c.cid = i.cid(+)
+         and c.cid = #{cid}
+    </select>
+     
+   <resultMap type="Candidate" id="_candidate">
+      <id property="cid" column="cid"></id>
+      <result property="aid" column="aid"></result>
+      <result property="cname" column="cname"></result>
+      <result property="cdeclaration" column="cdeclaration"></result>
+      <result property="mobile" column="mobile"></result>
+      <result property="sex" column="sex"></result>
+      <result property="address" column="address"></result>
+      <result property="hots" column="hots"></result>
+      <result property="gifts" column="gifts"></result>
+      <result property="tickets" column="tickets"></result>
+      <result property="imgurl" column="imgurl"></result>
+      <collection property="images" ofType="Images" column="cid">
+          <id property="id" column="id"></id>
+          <result property="imgurl" column="img"></result>
+      </collection>
+    </resultMap>
+</mapper>
